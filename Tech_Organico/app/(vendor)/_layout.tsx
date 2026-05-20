@@ -22,6 +22,8 @@ export default function VendorLayout() {
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const isRootTab = TAB_ROUTES.some(route => pathname.includes(route));
+  const isDetailScreen =
+    /\/(clientes|catalogo)\/.+/.test(pathname) && !pathname.endsWith('/agenda');
 
   useEffect(() => {
     if (!isLoading && role !== 'vendor') {
@@ -51,7 +53,7 @@ export default function VendorLayout() {
       </Tabs>
 
       {/* Botón hamburguesa flotante en esquina superior izquierda */}
-      {!menuOpen && isRootTab && (
+      {!menuOpen && isRootTab && !isDetailScreen && (
         <TouchableOpacity
           style={[styles.hamburgerBtn, { top: pathname.includes('dashboard') ? insets.top + 19 : insets.top + 4 }]}
           onPress={() => setMenuOpen(true)}

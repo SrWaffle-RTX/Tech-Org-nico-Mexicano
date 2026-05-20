@@ -24,6 +24,7 @@ export default function ClientLayout() {
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const isRootTab = TAB_ROUTES.some(route => pathname.includes(route));
+  const isDetailScreen = /\/pedidos\/.+/.test(pathname);
 
   const handleNavigate = (index: number) => {
     router.navigate(`/${TAB_ROUTES[index]}` as any);
@@ -46,7 +47,7 @@ export default function ClientLayout() {
       </Tabs>
 
       {/* Botón hamburguesa flotante en la esquina del header */}
-      {!menuOpen && isRootTab && (
+      {!menuOpen && isRootTab && !isDetailScreen && (
         <TouchableOpacity
           style={[styles.hamburgerBtn, { top: pathname.includes('catalogo') && role !== 'guest' ? insets.top + 14 : insets.top }]}
           onPress={() => setMenuOpen(true)}

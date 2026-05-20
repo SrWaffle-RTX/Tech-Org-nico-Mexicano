@@ -4,7 +4,13 @@
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\angel\\\\Downloads\\\\AQ\\\\Proyecto I\\\\Tech_Organico\" -Recurse -Force | Select-Object FullName | ConvertTo-Csv -NoTypeInformation | Select-Object -Skip 1 | ForEach-Object { $_ -replace '\"', '' } | Sort-Object)",
       "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\angel\\\\Downloads\\\\AQ\\\\Proyecto I\\\\Tech_Organico\\\\components\\\\CafeVolcanicoMap\")",
       "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\angel\\\\Downloads\\\\AQ\\\\Proyecto I\\\\Tech_Organico\\\\assets\\\\animations\")",
-      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\angel\\\\Downloads\\\\AQ\\\\Proyecto I\\\\Tech_Organico\\\\assets\\\\images\")"
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\angel\\\\Downloads\\\\AQ\\\\Proyecto I\\\\Tech_Organico\\\\assets\\\\images\")",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\angel\\\\OneDrive\\\\Documentos\\\\Tech-Org-nico-Mexicano\\\\Tech_Organico\" -Recurse -Directory | Select-Object -First 20 | ForEach-Object { $_.FullName })",
+      "Bash(npx expo *)",
+      "Bash(npm install *)",
+      "Bash(eas --version)",
+      "Bash(npx eas-cli@latest init --id 284bb70e-a361-45cd-9157-a88caa44c3c1)",
+      "Bash(dir \"c:\\\\Users\\\\angel\\\\OneDrive\\\\Documentos\\\\Tech-Org-nico-Mexicano\\\\Tech_Organico\\\\assets\" /b /s)"
     ]
   }
 }

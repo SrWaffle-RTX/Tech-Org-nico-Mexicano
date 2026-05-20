@@ -1,16 +1,16 @@
 {
   "expo": {
     "name": "Tech Orgánico",
-    "slug": "tech-organico",
+    "slug": "tech-organico-mexicano",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1E5E3A"
+      "backgroundColor": "#0F2F1E"
     },
     "ios": {
       "supportsTablet": false,
@@ -18,10 +18,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1E5E3A"
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#0F2F1E"
       },
-      "package": "mx.techorganico.app"
+      "package": "mx.techorganico.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -47,6 +52,13 @@
     "experiments": {
       "typedRoutes": true
     },
-    "scheme": "techorganico"
+    "scheme": "techorganico",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "284bb70e-a361-45cd-9157-a88caa44c3c1"
+      }
+    },
+    "owner": "srwaffles-organization"
   }
 }
