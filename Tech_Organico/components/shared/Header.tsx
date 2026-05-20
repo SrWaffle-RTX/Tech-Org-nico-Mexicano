@@ -60,5 +60,5 @@ const styles = StyleSheet.create({
   },
   iconBtn: { width: 40, alignItems: 'center' },
   icon: { fontSize: 22, color: Colors.blanco },
-  logoImg: { width: 40, height: 40, borderRadius: 6 },
+  logoImg: { width: 52, height: 52 },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { Colors } from '../../constants/colors';
@@ -22,7 +22,7 @@ export default function DashboardScreen() {
           <Text style={styles.greeting}>Buenos días, {user?.nombre ?? 'Admin'} 👋</Text>
           <Text style={styles.subtitle}>Resumen de mayo 2026</Text>
         </View>
-        <Text style={styles.logo}>☕</Text>
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
 
       <View style={styles.kpiGrid}>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, paddingLeft: 40 },
   greeting: { fontSize: 22, fontWeight: '800', color: Colors.verdeOscuro },
   subtitle: { fontSize: 13, color: Colors.textoSecundario, marginTop: 2 },
-  logo: { fontSize: 40 },
+  logo: { width: 70, height: 70 },
   kpiGrid: { flexDirection: 'row', gap: 12, marginBottom: 12 },
   sectionHeader: { marginTop: 20, marginBottom: 12 },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.verdeOscuro },

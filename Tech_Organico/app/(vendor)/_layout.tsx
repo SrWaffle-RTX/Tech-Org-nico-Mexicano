@@ -53,7 +53,7 @@ export default function VendorLayout() {
       {/* Botón hamburguesa flotante en esquina superior izquierda */}
       {!menuOpen && isRootTab && (
         <TouchableOpacity
-          style={[styles.hamburgerBtn, { top: insets.top + 4 }]}
+          style={[styles.hamburgerBtn, { top: pathname.includes('dashboard') ? insets.top + 19 : insets.top + 4 }]}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.7}
         >

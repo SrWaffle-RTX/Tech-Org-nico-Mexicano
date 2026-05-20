@@ -22,6 +22,7 @@ export default function CatalogoScreen() {
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <Header
         title="Tech Orgánico Mexicano"
+        logoSource={require('../../../assets/images/logo.png')}
         rightAction={role === 'guest' ? { icon: '👤', onPress: () => router.push('/(auth)/login') } : undefined}
       />
       <View style={styles.searchBox}>

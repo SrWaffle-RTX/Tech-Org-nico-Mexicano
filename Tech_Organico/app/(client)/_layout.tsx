@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tabs, useRouter, usePathname } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCartContext } from '../../contexts/CartContext';
+import { useAuthContext } from '../../contexts/AuthContext';
 import { SidebarNav } from '../../components/client/SidebarNav';
 import { Colors } from '../../constants/colors';
 
@@ -16,6 +17,7 @@ function useActiveTabIndex(): number {
 
 export default function ClientLayout() {
   const { count } = useCartContext();
+  const { role } = useAuthContext();
   const router = useRouter();
   const pathname = usePathname();
   const activeIndex = useActiveTabIndex();
@@ -46,7 +48,7 @@ export default function ClientLayout() {
       {/* Botón hamburguesa flotante en la esquina del header */}
       {!menuOpen && isRootTab && (
         <TouchableOpacity
-          style={[styles.hamburgerBtn, { top: insets.top + 8 }]}
+          style={[styles.hamburgerBtn, { top: pathname.includes('catalogo') && role !== 'guest' ? insets.top + 14 : insets.top }]}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.7}
         >

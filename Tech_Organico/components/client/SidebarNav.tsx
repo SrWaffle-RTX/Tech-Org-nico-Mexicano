@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
@@ -84,6 +85,12 @@ export function SidebarNav({ isOpen, onClose, activeIndex, onNavigate, cartCount
           },
         ]}
       >
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         {NAV_ITEMS.map((item, index) => {
           const focused = activeIndex === index;
           const showBadge = item.key === 'carrito' && cartCount > 0;
@@ -143,6 +150,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.18,
     shadowRadius: 8,
+  },
+  logo: {
+    width: '70%',
+    height: 70,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
   navItem: {
     flexDirection: 'row',
