@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { mockOrders } from '../../../data/mockOrders';
 import { useOrdersContext } from '../../../contexts/OrdersContext';
 import { Colors } from '../../../constants/colors';
 import Header from '../../../components/shared/Header';
@@ -20,8 +19,15 @@ const statusSteps: OrderStatus[] = ['pendiente', 'confirmado', 'enviado', 'entre
 
 export default function PedidoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getOrderById } = useOrdersContext();
-  const order = getOrderById(id ?? '') ?? mockOrders.find(o => o.id === id);
+  const { getOrderById, orders } = useOrdersContext();
+  const order = getOrderById(id ?? '');
+
+  if (orders.length === 0 && !order) return (
+    <View style={styles.container}>
+      <Header title="Pedido" showBack />
+      <ActivityIndicator style={{ marginTop: 40 }} color={Colors.verdePrincipal} />
+    </View>
+  );
 
   if (!order) return (
     <View style={styles.container}>

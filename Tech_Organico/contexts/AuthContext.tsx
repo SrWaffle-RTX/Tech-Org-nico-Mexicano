@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { ADMIN_EMAIL } from '../constants/config';
 import type { User, UserRole, AuthState } from '../types/user';
 
@@ -11,63 +18,61 @@ interface AuthContextValue extends AuthState {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const AUTH_KEY = '@techorganico_auth';
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole>('guest');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    restoreSession();
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setIsLoading(true);
+      if (firebaseUser) {
+        try {
+          const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            const appUser: User = {
+              id: firebaseUser.uid,
+              email: firebaseUser.email ?? '',
+              nombre: data.nombre ?? '',
+              role: data.role as UserRole,
+              fechaRegistro: data.fechaRegistro,
+            };
+            setUser(appUser);
+            setRole(appUser.role);
+          }
+        } catch {
+          setUser(null);
+          setRole('guest');
+        }
+      } else {
+        setUser(null);
+        setRole('guest');
+      }
+      setIsLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  async function restoreSession() {
-    try {
-      const stored = await AsyncStorage.getItem(AUTH_KEY);
-      if (stored) {
-        const parsed: User = JSON.parse(stored);
-        setUser(parsed);
-        setRole(parsed.role);
-      }
-    } catch {
-      // sesión corrupta, continuar como guest
-    } finally {
-      setIsLoading(false);
-    }
+  async function login(email: string, password: string) {
+    await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged se encarga de actualizar el estado
   }
 
-  async function login(email: string, _password: string) {
+  async function register(nombre: string, email: string, password: string) {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
     const determinedRole: UserRole = email === ADMIN_EMAIL ? 'vendor' : 'client';
-    const newUser: User = {
-      id: `user-${Date.now()}`,
+    await setDoc(doc(db, 'users', credential.user.uid), {
+      nombre,
       email,
-      nombre: email.split('@')[0] ?? email,
       role: determinedRole,
       fechaRegistro: new Date().toISOString(),
-    };
-    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(newUser));
-    setUser(newUser);
-    setRole(determinedRole);
-  }
-
-  async function register(nombre: string, email: string, _password: string) {
-    const newUser: User = {
-      id: `user-${Date.now()}`,
-      email,
-      nombre,
-      role: 'client',
-      fechaRegistro: new Date().toISOString(),
-    };
-    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(newUser));
-    setUser(newUser);
-    setRole('client');
+    });
+    // onAuthStateChanged se encarga de actualizar el estado
   }
 
   async function logout() {
-    await AsyncStorage.removeItem(AUTH_KEY);
-    setUser(null);
-    setRole('guest');
+    await signOut(auth);
   }
 
   return (

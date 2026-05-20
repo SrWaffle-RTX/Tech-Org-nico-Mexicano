@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { mockOrders } from '../../../data/mockOrders';
 import { useOrdersContext } from '../../../contexts/OrdersContext';
 import { Colors } from '../../../constants/colors';
 import Header from '../../../components/shared/Header';
@@ -19,9 +18,7 @@ const statusBadge: Record<OrderStatus, 'primary' | 'success' | 'warning' | 'info
 export default function PedidosScreen() {
   const router = useRouter();
   const { orders } = useOrdersContext();
-  const allOrders = [...orders, ...mockOrders].sort(
-    (a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime(),
-  );
+  const allOrders = [...orders];
 
   function renderPedido({ item }: { item: Order }) {
     return (

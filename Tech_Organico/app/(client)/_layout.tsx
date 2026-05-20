@@ -24,7 +24,7 @@ export default function ClientLayout() {
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const isRootTab = TAB_ROUTES.some(route => pathname.includes(route));
-  const isDetailScreen = /\/pedidos\/.+/.test(pathname);
+  const isDetailScreen = /\/(pedidos|catalogo)\/.+/.test(pathname);
 
   const handleNavigate = (index: number) => {
     router.navigate(`/${TAB_ROUTES[index]}` as any);

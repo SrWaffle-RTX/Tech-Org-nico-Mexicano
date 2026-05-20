@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { ADMIN_EMAIL } from '../../constants/config';
 import { Colors } from '../../constants/colors';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -27,8 +28,9 @@ export default function RegisterScreen() {
     setError('');
     setLoading(true);
     try {
-      await register(nombre.trim(), email.trim().toLowerCase(), password);
-      router.replace('/(client)/catalogo');
+      const cleanEmail = email.trim().toLowerCase();
+      await register(nombre.trim(), cleanEmail, password);
+      router.replace(cleanEmail === ADMIN_EMAIL ? '/(vendor)/dashboard' : '/(client)/catalogo');
     } catch {
       setError('Ocurrió un error. Inténtalo de nuevo.');
     } finally {
