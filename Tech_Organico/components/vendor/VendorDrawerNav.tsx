@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
@@ -108,6 +109,13 @@ export function VendorDrawerNav({ isOpen, onClose, activeIndex, onNavigate }: Pr
           },
         ]}
       >
+        {/* Logo */}
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         {NAV_ITEMS.map((item, index) => {
           const focused = activeIndex === index;
 
@@ -231,5 +239,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#C0392B',
     fontWeight: '600',
+  },
+  logo: {
+    width: 64,
+    height: 64,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
 });

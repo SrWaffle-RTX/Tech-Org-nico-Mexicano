@@ -1,11 +1,14 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../lib/firebase';
+import { useOrdersContext } from '../../../contexts/OrdersContext';
 import { mockClients } from '../../../data/mockClients';
 import { Colors } from '../../../constants/colors';
 import Header from '../../../components/shared/Header';
 import Badge from '../../../components/ui/Badge';
-import type { SegmentoCliente } from '../../../types/vendor';
+import type { ClienteVendedor, SegmentoCliente } from '../../../types/vendor';
 
 const segmentoBadge: Record<SegmentoCliente, 'primary' | 'success' | 'warning'> = {
   mayoreo: 'success',
@@ -13,9 +16,70 @@ const segmentoBadge: Record<SegmentoCliente, 'primary' | 'success' | 'warning'> 
   nuevo: 'warning',
 };
 
+function calcSegmento(totalCompras: number): SegmentoCliente {
+  if (totalCompras >= 10) return 'mayoreo';
+  if (totalCompras >= 3) return 'detalle';
+  return 'nuevo';
+}
+
 export default function ClienteDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const cliente = mockClients.find(c => c.id === id);
+  const { orders } = useOrdersContext();
+  const [cliente, setCliente] = useState<ClienteVendedor | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+
+    // Mock client: use static data directly
+    const mock = mockClients.find(c => c.id === id);
+    if (mock) {
+      setCliente(mock);
+      setLoading(false);
+      return;
+    }
+
+    // Firestore client: fetch user + compute stats from orders
+    async function loadFirestoreClient() {
+      try {
+        const snap = await getDoc(doc(db, 'users', id));
+        if (!snap.exists()) return;
+
+        const data = snap.data();
+        const clientOrders = orders.filter(o => o.clienteId === id);
+        const totalCompras = clientOrders.length;
+        const montoTotal = clientOrders.reduce((sum, o) => sum + o.total, 0);
+        const sorted = [...clientOrders].sort(
+          (a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime(),
+        );
+        const ultimaCompra = sorted[0]?.fechaCreacion ?? data.fechaRegistro ?? new Date().toISOString();
+
+        setCliente({
+          id,
+          nombre: data.nombre ?? 'Sin nombre',
+          email: data.email ?? '',
+          segmento: calcSegmento(totalCompras),
+          totalCompras,
+          montoTotal,
+          ultimaCompra,
+          frecuenciaCompra: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadFirestoreClient();
+  }, [id, orders]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Header title="Perfil del cliente" showBack />
+        <ActivityIndicator style={styles.loader} color={Colors.verdePrincipal} />
+      </View>
+    );
+  }
 
   if (!cliente) return null;
 
@@ -42,7 +106,13 @@ export default function ClienteDetailScreen() {
 
         <Text style={styles.sectionTitle}>Última compra</Text>
         <View style={styles.infoCard}>
-          <Text style={styles.infoValue}>{new Date(cliente.ultimaCompra).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
+          <Text style={styles.infoValue}>
+            {new Date(cliente.ultimaCompra).toLocaleDateString('es-MX', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </Text>
         </View>
 
         {cliente.notas ? (
@@ -97,4 +167,5 @@ const styles = StyleSheet.create({
   segmentoInfo: { backgroundColor: Colors.verdePrincipal + '12', borderRadius: 12, padding: 16 },
   segmentoTitle: { fontSize: 15, fontWeight: '700', color: Colors.verdePrincipal, marginBottom: 6 },
   segmentoDesc: { fontSize: 13, color: Colors.textoPrincipal, lineHeight: 20 },
+  loader: { marginTop: 40 },
 });
